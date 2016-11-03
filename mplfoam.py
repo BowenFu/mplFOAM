@@ -319,6 +319,6 @@ class mplFOAM:
 
     def update_time(self, time):
         assert time in self.timestep_available
-        UpdatePipeline(time)
+        UpdatePipeline(time=time)
 
 
