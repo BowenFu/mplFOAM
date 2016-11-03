@@ -5,25 +5,26 @@ import subprocess
 import sys
 
 # Cases names (list of directories):
-cases_names = ["pitzDaily1","pitzDaily2","pitzDaily3"]
+cases_names = ["pitzDaily1", "pitzDaily2", "pitzDaily3"]
 
 # Run in parallel
-parallel = True # Or False for one proc
+parallel = True  # Or False for one proc
 
 # Redirect the output of the Python script to a file
-log_filename ="runCases.log"
+log_filename = "runCases.log"
 log_file = open(log_filename, 'w')
 sys.stdout = log_file
 
-# Ensure that all cases (directories) exist and remove the non-existent ones from the list.
+# Ensure that all cases (directories) exist and remove the non-existent
+# ones from the list.
 cases_names_exist = cases_names.copy()
 for case_name in cases_names:
     if not os.path.isdir(case_name):
         print("Warning: The case directory " + case_name + " does not exist.")
         cases_names_exist.remove(case_name)
 if len(cases_names_exist) == 0:
-     print("Error: No case found")
-     sys.exit()
+    print("Error: No case found")
+    sys.exit()
 
 # Start the main loop on case directory
 # If you don't want to wait for the end of the foamJob process

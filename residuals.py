@@ -12,6 +12,8 @@ import numpy as np
 variables = ["Ux", "Uy", "T", "p_rgh", "k", "epsilon"]
 
 # Get the arguments of the script
+
+
 def usage():
     print("Usage: residuals.py -l logfile\nPlot the residuals versus Time/Iteration")
 
@@ -29,37 +31,46 @@ for opt, arg in options:
         sys.exit(1)
 
 # Get the lines of the logfile 'log_file'
-lines = open(log_file, "r" ).readlines()
+lines = open(log_file, "r").readlines()
 
 # Get the time and continuity values
-time = [] # Time(s) or iterations counter
-continuity = [] # Continuity values 
+time = []  # Time(s) or iterations counter
+continuity = []  # Continuity values
 for line in lines:
-    if re.search(r"^Time = ", line): # Search for string 'Time' at the begining of the line in file
+    if re.search(
+            r"^Time = ", line):  # Search for string 'Time' at the begining of the line in file
         start = 'Time = '
-        value = line.split(start)[1] # Take the Time value as the string just after start
-        time.append(np.float(value)) # Transform the string in a float value
-    elif re.search(r"continuity errors :", line): # Search for string 'continuity' in the lines of file 'log_file'
+        # Take the Time value as the string just after start
+        value = line.split(start)[1]
+        time.append(np.float(value))  # Transform the string in a float value
+    # Search for string 'continuity' in the lines of file 'log_file'
+    elif re.search(r"continuity errors :", line):
         start = 'sum local = '
         end = ', global'
-        value = line.split(start)[1].split(end)[0] # Take the continuity value as string between start and end
-        continuity.append(np.float(value)) # Transform the string in a float value
+        # Take the continuity value as string between start and end
+        value = line.split(start)[1].split(end)[0]
+        # Transform the string in a float value
+        continuity.append(np.float(value))
 
 # Get the residual values for each variable
 for variable in variables:
     data = []
     for line in lines:
-        if re.search(r"Solving for " + variable, line):# Search for string variable in line of file 'log_file'
+        # Search for string variable in line of file 'log_file'
+        if re.search(r"Solving for " + variable, line):
             start = 'Final residual = '
             end = ', No Iterations'
             value = line.split(start)[1].split(end)[0]
             data.append(np.float(value))
-    plt.plot(np.array(time),np.array(data), label=variable) # Plot the residual values of variable
+    # Plot the residual values of variable
+    plt.plot(np.array(time), np.array(data), label=variable)
 
-plt.plot(np.array(time),np.array(continuity), label="Continuity") # Plot the continuity values
+plt.plot(np.array(time), np.array(continuity),
+         label="Continuity")  # Plot the continuity values
 
 # Plot
-plt.title("Residuals plot:\n * logfile: " + log_file + "\n * case dir: " + os.getcwd().split('/')[-1], loc='left')
+plt.title("Residuals plot:\n * logfile: " + log_file +
+          "\n * case dir: " + os.getcwd().split('/')[-1], loc='left')
 plt.xlabel("Time(s)/Iterations")
 plt.ylabel("Residuals (Log Scale)")
 plt.yscale('log')
