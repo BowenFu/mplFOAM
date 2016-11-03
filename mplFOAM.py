@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 # mplFOAM module
-# some useful functions to import, plot OpenFoam data with matplotlib
+# plot OpenFoam data with matplotlib
 
 import os
 import numpy 
@@ -9,10 +9,10 @@ import matplotlib.pyplot
 import vtk
 
 try: paraview.simple
-except: from paraview.simple import *
+except: import paraview.simple
 paraview.simple._DisableFirstRenderCameraReset()
 
-from vtk.util import numpy_support as npvtk
+import vtk.util.numpy_support 
 
 class mplFOAM:
 
@@ -40,7 +40,7 @@ class mplFOAM:
         case_file.close()
 
         # Define the OpenFOAM data source
-        openfoam_case = OpenDataFile(filename)
+        openfoam_case = paraview.simple.OpenDataFile(filename)
 
         # Import all the mesh parts if none are specified
         mesh_parts = openfoam_case.MeshParts.Available
@@ -63,7 +63,7 @@ class mplFOAM:
         #     print "Volume fields: ", volume_fields
         #     print "Timestep values: ", openfoam_case.TimestepValues
 
-        self.openfoam_case_merged = MergeBlocks(openfoam_case)
+        self.openfoam_case_merged = paraview.simple.MergeBlocks(openfoam_case)
         # openfoam_data = servermanager.Fetch(openfoam_case)
 
 
@@ -75,7 +75,7 @@ class mplFOAM:
 
         # Define the data
         Tetrahedralize1 = Tetrahedralize()
-        data = servermanager.Fetch(Tetrahedralize1)
+        data = paraview.simple.servermanager.Fetch(Tetrahedralize1)
 
         # Define the number of points, cells and arrays
         nb_points = self.openfoam_case_merged.GetNumberOfPoints()
@@ -131,13 +131,13 @@ class mplFOAM:
         #print 'Points',points
 
         # Define the velocity components U=(u,v,w)
-        U = npvtk.vtk_to_numpy(self.openfoam_case_merged.GetPointData().GetArray('U'))
+        U = vtk.util.numpy_support.vtk_to_numpy(self.openfoam_case_merged.GetPointData().GetArray('U'))
         u = U[:,0]
         v = U[:,1]
         w = U[:,2]
 
         # Define the cinematique pressure p => p/\rho
-        p = npvtk.vtk_to_numpy(self.openfoam_case_merged.GetPointData().GetArray('p'))
+        p = vtk.util.numpy_support.vtk_to_numpy(self.openfoam_case_merged.GetPointData().GetArray('p'))
 
         # Return the values extracted from the slice
         # return x,y,z,u,v,w,p,tri
@@ -163,16 +163,16 @@ class mplFOAM:
 
         """
         # Select the active source
-        SetActiveSource(self.openfoam_case_merged)
+        paraview.simple.SetActiveSource(self.openfoam_case_merged)
 
         # Define the plane
-        Slice1 = Slice(SliceType="Plane")
+        Slice1 = paraview.simple.Slice(SliceType="Plane")
         Slice1.SliceType = 'Plane'
         Slice1.SliceType.Origin = slice_origin
         Slice1.SliceType.Normal = slice_normal
         #Slice1.UpdatePipeline()
 
-        self.plane_data = servermanager.Fetch(Slice1)
+        self.plane_data = paraview.simple.servermanager.Fetch(Slice1)
 
         # Define the number of points, cells and arrays
         nb_points = self.plane_data.GetNumberOfPoints()
@@ -249,7 +249,7 @@ class mplFOAM:
         """Extract the vector field components in the plane"""
 
         # Define the velocity components U=(u,v,w)
-        U = npvtk.vtk_to_numpy(self.plane_data.GetPointData().GetArray(field_name))
+        U = vtk.util.numpy_support.vtk_to_numpy(self.plane_data.GetPointData().GetArray(field_name))
         u = U[:,0]
         v = U[:,1]
         w = U[:,2]
@@ -319,6 +319,6 @@ class mplFOAM:
 
     def update_time(self, time):
         assert time in self.timestep_available
-        UpdatePipeline(time=time)
+        paraview.simple.UpdatePipeline(time=time)
 
 
