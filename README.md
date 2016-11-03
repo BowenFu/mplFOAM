@@ -9,11 +9,8 @@ At present time it only support:
 
 Usage:
 
-.. code-block:: python
-
     import mplFOAM
     import matplotlib.pyplot
-
     m = mplFOAM.mplFOAM(directory='path/to/case/')
     print(m.timestep_available)
     for time in m.timestep_available[::5]:
