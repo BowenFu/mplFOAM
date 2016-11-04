@@ -105,7 +105,12 @@ class mplFOAM:
         # print 'Array [',i,'] name:',
         # self.plane_data.GetPointData().GetArrayName(i)
 
-    def tricontourf_field(self, field_name, composition_index=None, contour_num=10, contourf_num=20):
+    def tricontourf_field(
+            self,
+            field_name,
+            composition_index=None,
+            contour_num=10,
+            contourf_num=20):
         assert field_name in self.field_available
         triangles = self.plane_data.GetPolys().GetData()
         points = self.plane_data.GetPoints()
@@ -144,7 +149,8 @@ class mplFOAM:
                 result = result[composition_index]
             results[i] = result
 
-        matplotlib.pyplot.tricontour(x, y, tri, results, contour_num, colors='0.2')
+        matplotlib.pyplot.tricontour(
+            x, y, tri, results, contour_num, colors='0.2')
         matplotlib.pyplot.tricontourf(x, y, tri, results, contourf_num)
         matplotlib.pyplot.legend()
         matplotlib.pyplot.axes().set_aspect('equal', 'datalim')

@@ -47,10 +47,11 @@ for case_name in cases_names_exist:
                         stdout=log_file,
                         stderr=subprocess.STDOUT)
         # Reconstruct the case: output in 'log.reconstructPar' file
-        subprocess.call("reconstructPar -latestTime 2>&1 | tee -a log.reconstructPar",
-                        shell=True,
-                        stdout=log_file,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(
+            "reconstructPar -latestTime 2>&1 | tee -a log.reconstructPar",
+            shell=True,
+            stdout=log_file,
+            stderr=subprocess.STDOUT)
     else:
         # Run the OpenFoam case
         subprocess.call("foamJob -wait simpleFoam",

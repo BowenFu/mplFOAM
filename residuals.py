@@ -38,7 +38,8 @@ time = []  # Time(s) or iterations counter
 continuity = []  # Continuity values
 for line in lines:
     if re.search(
-            r"^Time = ", line):  # Search for string 'Time' at the begining of the line in file
+        r"^Time = ",
+            line):  # Search for string 'Time' at the begining of the line in file
         start = 'Time = '
         # Take the Time value as the string just after start
         value = line.split(start)[1]
