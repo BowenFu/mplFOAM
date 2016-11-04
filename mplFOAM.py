@@ -60,8 +60,7 @@ class mplFOAM:
         #openfoam_case.TimestepValues = openfoam_case.TimestepValues[-1]
 
         # Print some basic informations on the loaded self.openfoam_case_merged
-        if True:
-            print "Case directory: ", directory
+        # print "Case directory: ", directory
         #     print "Mesh parts: ", mesh_parts
         #     print "Volume fields: ", volume_fields
         #     print "Timestep values: ", openfoam_case.TimestepValues
@@ -98,18 +97,17 @@ class mplFOAM:
             tri[i, 2] = triangles.GetTuple(4 * i + 3)[0]
 
         # Display some informations on the slice
-        if True:
 
             # print 'Patch name :', patchName
-            print "Number of cells:", nb_cells
-            print "Number of triangles:", nb_triangles
-            print "Number of points:", nb_points
-            print "Number of arrays:", nb_arrays
-
-            for i in range(nb_arrays):
-                print 'Array [', i, '] name:', self.openfoam_case_merged.GetPointData().GetArrayName(i)
-
-        # Put the points coordinates in x, y and z arrays
+            #             print "Number of cells:", nb_cells
+            #             print "Number of triangles:", nb_triangles
+            #             print "Number of points:", nb_points
+            #             print "Number of arrays:", nb_arrays
+            #
+            #             for i in range(nb_arrays):
+            #                 print 'Array [', i, '] name:', self.openfoam_case_merged.GetPointData().GetArrayName(i)
+            #
+            # Put the points coordinates in x, y and z arrays
         x = []
         y = []
         z = []
@@ -211,8 +209,8 @@ class mplFOAM:
             tri[i, 2] = triangles.GetTuple(4 * i + 3)[0]
 
         # Display some informations on the triangulation
-        if verbose:
-            print "Number of triangles:", nb_triangles
+        # if verbose:
+         #    print "Number of triangles:", nb_triangles
 
         # Return the triangulation of the plane
         # return tri, triangles
@@ -240,11 +238,11 @@ class mplFOAM:
         z = numpy.array(z)
 
         # Display some informations on the triangulation points
-        if verbose:
-            print "Number of points:", nb_points
-            print "xrange: [%5.3f, %5.3f]" % (x.min(), x.max())
-            print "yrange: [%5.3f, %5.3f]" % (y.min(), y.max())
-            print "zrange: [%5.3f, %5.3f]" % (z.min(), z.max())
+#        if verbose:
+#            print "Number of points:", nb_points
+#            print "xrange: [%5.3f, %5.3f]" % (x.min(), x.max())
+#            print "yrange: [%5.3f, %5.3f]" % (y.min(), y.max())
+#            print "zrange: [%5.3f, %5.3f]" % (z.min(), z.max())
 
         # Return the cartesian coordinates of the triangulation points
         # return x,y,z
