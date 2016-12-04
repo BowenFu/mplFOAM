@@ -3,6 +3,8 @@
 # mplFOAM module
 # plot OpenFoam data with matplotlib
 
+import style
+
 import os
 import numpy
 import matplotlib.pyplot
@@ -108,9 +110,16 @@ class mplFOAM:
     def tricontourf_field(
             self,
             field_name,
+            out_filenames,
             composition_index=None,
+            x_range=None,
+            y_range=None,
+            colorbar=False,
+            colorbar_range=None,
             contour_num=10,
-            contourf_num=20):
+            contourf_num=20, 
+            figsize=(style.ONE_AND_HALF_COLUMN_WIDTH,
+                style.ONE_AND_HALF_COLUMN_SHORT_HEIGHT)):
         assert field_name in self.field_available
         triangles = self.plane_data.GetPolys().GetData()
         points = self.plane_data.GetPoints()
@@ -149,13 +158,36 @@ class mplFOAM:
                 result = result[composition_index]
             results[i] = result
 
-        matplotlib.pyplot.tricontour(
-            x, y, tri, results, contour_num, colors='0.2')
-        matplotlib.pyplot.tricontourf(x, y, tri, results, contourf_num)
-        matplotlib.pyplot.legend()
+        matplotlib.pyplot.clf()
+        matplotlib.pyplot.gcf().set_size_inches(figsize)
+        matplotlib.pyplot.axis('off')
+        if x_range:
+            matplotlib.pyplot.xlim(x_range)
+        if y_range:
+            matplotlib.pyplot.ylim(y_range)
+
+        if colorbar_range:
+            contour_range = numpy.linspace(
+                colorbar_range[0], colorbar_range[1], contour_num)
+            contourf_range = numpy.linspace(
+                colorbar_range[0], colorbar_range[1], contour_num)
+            results[results > colorbar_range[1]] = colorbar_range[1]
+            results[results < colorbar_range[0]] = colorbar_range[0]
+
+            matplotlib.pyplot.tricontour(
+                x, y, tri, results, contour_range, colors='0.2')
+        else:
+            matplotlib.pyplot.tricontour(
+                x, y, tri, results, colors='0.2')
+
+        if colorbar:
+            matplotlib.pyplot.colorbar().ax.set_title(colorbar_zlabel)
+
+        # matplotlib.pyplot.tricontourf(x, y, tri, results, contourf_range)
         matplotlib.pyplot.axes().set_aspect('equal', 'datalim')
-        matplotlib.pyplot.grid()
-        matplotlib.pyplot.show()
+        matplotlib.pyplot.tight_layout()
+        for out_filename in out_filenames:
+            matplotlib.pyplot.savefig(out_filename)
 
     @property
     def field_available(self):
