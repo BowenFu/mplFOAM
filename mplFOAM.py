@@ -17,7 +17,6 @@ import vtk.util.numpy_support
 
 
 class mplFOAM:
-
     def __init__(self, directory=None):
         """
         Read the OpenFOAM self.openfoam_case_merged
@@ -107,19 +106,18 @@ class mplFOAM:
         # print 'Array [',i,'] name:',
         # self.plane_data.GetPointData().GetArrayName(i)
 
-    def tricontourf_field(
-            self,
-            field_name,
-            out_filenames,
-            composition_index=None,
-            x_range=None,
-            y_range=None,
-            colorbar=False,
-            colorbar_range=None,
-            contour_num=10,
-            contourf_num=20, 
-            figsize=(style.ONE_AND_HALF_COLUMN_WIDTH,
-                style.ONE_AND_HALF_COLUMN_SHORT_HEIGHT)):
+    def tricontourf_field(self,
+                          field_name,
+                          out_filenames,
+                          composition_index=None,
+                          x_range=None,
+                          y_range=None,
+                          colorbar=False,
+                          colorbar_range=None,
+                          contour_num=10,
+                          contourf_num=20,
+                          figsize=(style.ONE_AND_HALF_COLUMN_WIDTH,
+                                   style.ONE_AND_HALF_COLUMN_SHORT_HEIGHT)):
         assert field_name in self.field_available
         triangles = self.plane_data.GetPolys().GetData()
         points = self.plane_data.GetPoints()
@@ -167,18 +165,17 @@ class mplFOAM:
             matplotlib.pyplot.ylim(y_range)
 
         if colorbar_range:
-            contour_range = numpy.linspace(
-                colorbar_range[0], colorbar_range[1], contour_num)
-            contourf_range = numpy.linspace(
-                colorbar_range[0], colorbar_range[1], contour_num)
+            contour_range = numpy.linspace(colorbar_range[0],
+                                           colorbar_range[1], contour_num)
+            contourf_range = numpy.linspace(colorbar_range[0],
+                                            colorbar_range[1], contour_num)
             results[results > colorbar_range[1]] = colorbar_range[1]
             results[results < colorbar_range[0]] = colorbar_range[0]
 
             matplotlib.pyplot.tricontour(
                 x, y, tri, results, contour_range, colors='0.2')
         else:
-            matplotlib.pyplot.tricontour(
-                x, y, tri, results, colors='0.2')
+            matplotlib.pyplot.tricontour(x, y, tri, results, colors='0.2')
 
         if colorbar:
             matplotlib.pyplot.colorbar().ax.set_title(colorbar_zlabel)

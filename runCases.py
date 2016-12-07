@@ -37,15 +37,17 @@ for case_name in cases_names_exist:
     print("===========================", flush=True)
     if parallel:
         # Decompose the case: output in 'log.decomposePar' file
-        subprocess.call("decomposePar 2>&1 | tee -a log.decomposePar",
-                        shell=True,
-                        stdout=log_file,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(
+            "decomposePar 2>&1 | tee -a log.decomposePar",
+            shell=True,
+            stdout=log_file,
+            stderr=subprocess.STDOUT)
         # Run the OpenFoam case in parallel: output in 'log' file
-        subprocess.call("foamJob -wait -p simpleFoam",
-                        shell=True,
-                        stdout=log_file,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(
+            "foamJob -wait -p simpleFoam",
+            shell=True,
+            stdout=log_file,
+            stderr=subprocess.STDOUT)
         # Reconstruct the case: output in 'log.reconstructPar' file
         subprocess.call(
             "reconstructPar -latestTime 2>&1 | tee -a log.reconstructPar",
@@ -54,9 +56,10 @@ for case_name in cases_names_exist:
             stderr=subprocess.STDOUT)
     else:
         # Run the OpenFoam case
-        subprocess.call("foamJob -wait simpleFoam",
-                        shell=True,
-                        stdout=log_file,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(
+            "foamJob -wait simpleFoam",
+            shell=True,
+            stdout=log_file,
+            stderr=subprocess.STDOUT)
     # Revert to the root directory.
     os.chdir("../")

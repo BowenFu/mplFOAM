@@ -15,7 +15,10 @@ variables = ["Ux", "Uy", "T", "p_rgh", "k", "epsilon"]
 
 
 def usage():
-    print("Usage: residuals.py -l logfile\nPlot the residuals versus Time/Iteration")
+    print(
+        "Usage: residuals.py -l logfile\nPlot the residuals versus Time/Iteration"
+    )
+
 
 try:
     options, args = getopt.getopt(sys.argv[1:], 'l:h', ['help', 'logfile='])
@@ -38,8 +41,8 @@ time = []  # Time(s) or iterations counter
 continuity = []  # Continuity values
 for line in lines:
     if re.search(
-        r"^Time = ",
-            line):  # Search for string 'Time' at the begining of the line in file
+            r"^Time = ", line
+    ):  # Search for string 'Time' at the begining of the line in file
         start = 'Time = '
         # Take the Time value as the string just after start
         value = line.split(start)[1]
@@ -66,12 +69,15 @@ for variable in variables:
     # Plot the residual values of variable
     plt.plot(np.array(time), np.array(data), label=variable)
 
-plt.plot(np.array(time), np.array(continuity),
-         label="Continuity")  # Plot the continuity values
+plt.plot(
+    np.array(time), np.array(continuity),
+    label="Continuity")  # Plot the continuity values
 
 # Plot
-plt.title("Residuals plot:\n * logfile: " + log_file +
-          "\n * case dir: " + os.getcwd().split('/')[-1], loc='left')
+plt.title(
+    "Residuals plot:\n * logfile: " + log_file + "\n * case dir: " +
+    os.getcwd().split('/')[-1],
+    loc='left')
 plt.xlabel("Time(s)/Iterations")
 plt.ylabel("Residuals (Log Scale)")
 plt.yscale('log')
