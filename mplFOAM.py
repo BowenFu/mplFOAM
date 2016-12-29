@@ -159,10 +159,15 @@ class mplFOAM:
         matplotlib.pyplot.clf()
         matplotlib.pyplot.gcf().set_size_inches(figsize)
         matplotlib.pyplot.axis('off')
+        matplotlib.pyplot.axes().set_aspect('equal', 'datalim')
         if x_range:
             matplotlib.pyplot.xlim(x_range)
         if y_range:
             matplotlib.pyplot.ylim(y_range)
+
+        #matplotlib.pyplot.triplot(x,y)
+        #matplotlib.pyplot.show()
+
 
         if colorbar_range:
             contour_range = numpy.linspace(colorbar_range[0],
@@ -181,11 +186,9 @@ class mplFOAM:
             matplotlib.pyplot.colorbar().ax.set_title(colorbar_zlabel)
 
         # matplotlib.pyplot.tricontourf(x, y, tri, results, contourf_range)
-        matplotlib.pyplot.axes().set_aspect('equal', 'datalim')
         matplotlib.pyplot.tight_layout()
         for out_filename in out_filenames:
             matplotlib.pyplot.savefig(out_filename)
-
     @property
     def field_available(self):
         return self._field_available
