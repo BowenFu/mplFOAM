@@ -3,6 +3,8 @@
 # mplFOAM module
 # plot OpenFoam data with matplotlib
 
+from __future__ import print_function, division
+
 import style
 
 import os
@@ -114,8 +116,104 @@ class mplFOAM:
                           y_range=None,
                           colorbar=False,
                           colorbar_range=None,
-                          contour_num=10,
                           contourf_num=20,
+                          figsize=(style.ONE_AND_HALF_COLUMN_WIDTH,
+                                   style.ONE_AND_HALF_COLUMN_SHORT_HEIGHT)):
+        # print(self.field_available)
+        assert field_name in self.field_available
+        triangles = self.plane_data.GetPolys().GetData()
+        points = self.plane_data.GetPoints()
+
+        # Mapping data: cell -> point
+        mapper = vtk.vtkCellDataToPointData()
+        mapper.AddInputData(self.plane_data)
+        mapper.Update()
+        mapped_data = mapper.GetOutput()
+
+        # Extracting interpolate point data
+        data_value = mapped_data.GetPointData().GetArray(field_name)
+
+        ntri = triangles.GetNumberOfTuples() // 4
+        npts = points.GetNumberOfPoints()
+        nvls = data_value.GetNumberOfTuples()
+
+        tri = numpy.zeros((ntri, 3))
+        x = numpy.zeros(npts)
+        y = numpy.zeros(npts)
+        results = numpy.zeros(nvls)
+
+        for i in range(0, ntri):
+            tri[i, 0] = triangles.GetTuple(4 * i + 1)[0]
+            tri[i, 1] = triangles.GetTuple(4 * i + 2)[0]
+            tri[i, 2] = triangles.GetTuple(4 * i + 3)[0]
+
+        for i in range(npts):
+            pt = points.GetPoint(i)
+            x[i] = pt[0]
+            y[i] = pt[1]
+
+        for i in range(0, nvls):
+            result = data_value.GetTuple(i)
+            if composition_index is not None:
+                result = result[composition_index]
+            results[i] = result
+
+        matplotlib.pyplot.clf()
+        matplotlib.pyplot.gcf().set_size_inches(figsize)
+        matplotlib.pyplot.axis('off')
+        matplotlib.pyplot.axes().set_aspect('equal', 'datalim')
+        if x_range:
+            matplotlib.pyplot.xlim(x_range)
+        if y_range:
+            matplotlib.pyplot.ylim(y_range)
+
+        #matplotlib.pyplot.triplot(x,y)
+        #matplotlib.pyplot.show()
+
+
+        if colorbar_range:
+            contourf_range = numpy.linspace(colorbar_range[0],
+                                            colorbar_range[1], contourf_num)
+            '''
+            contourf_range = None
+            if numpy.sign(colorbar_range[0]) != numpy.sign(colorbar_range[1]):
+                contourf_range =  numpy.append(
+                        numpy.sign(colorbar_range[0])*numpy.logspace(0, numpy.log10(numpy.abs(colorbar_range[0])), contourf_num//2),
+                        numpy.sign(colorbar_range[1])*numpy.logspace(0, numpy.log10(numpy.abs(colorbar_range[1])), contourf_num//2))
+            else :
+                contourf_range = numpy.sign(colorbar_range[0])*numpy.logspace(numpy.log10(numpy.abs(colorbar_range[0])), numpy.log10(numpy.abs(colorbar_range[1])), contourf_num)
+            contourf_range = numpy.sort(contourf_range)
+            '''
+            #print(contourf_range)
+            # print(min(results), max(results))
+            '''
+            results[results >= contourf_range.max()] = contourf_range.max()
+            results[results <= contourf_range.min()] = contourf_range.min()
+            '''
+            # print(min(results), max(results))
+            # matplotlib.pyplot.tricontour(
+            #     x, y, tri, results, contour_range, colors='0.2')
+            matplotlib.pyplot.tricontourf(x, y, tri, results, contourf_range, extend='both', cmap=style.CMAP_DOUBLE)
+        else:
+            # matplotlib.pyplot.tricontour(x, y, tri, results, colors=style.LIGHT_COLOR)
+            matplotlib.pyplot.tricontourf(x, y, tri, results, extend='both', cmap=style.CMAP_DOUBLE)
+
+        if colorbar:
+            matplotlib.pyplot.colorbar().ax.set_title(colorbar_zlabel)
+
+        matplotlib.pyplot.tight_layout()
+        for out_filename in out_filenames:
+            matplotlib.pyplot.savefig(out_filename)
+
+    def tricontour_field(self,
+                          field_name,
+                          out_filenames,
+                          composition_index=None,
+                          x_range=None,
+                          y_range=None,
+                          colorbar=False,
+                          colorbar_range=None,
+                          contour_num=10,
                           figsize=(style.ONE_AND_HALF_COLUMN_WIDTH,
                                    style.ONE_AND_HALF_COLUMN_SHORT_HEIGHT)):
         assert field_name in self.field_available
@@ -131,7 +229,7 @@ class mplFOAM:
         # Extracting interpolate point data
         data_value = mapped_data.GetPointData().GetArray(field_name)
 
-        ntri = triangles.GetNumberOfTuples() / 4
+        ntri = triangles.GetNumberOfTuples() // 4
         npts = points.GetNumberOfPoints()
         nvls = data_value.GetNumberOfTuples()
 
@@ -172,20 +270,26 @@ class mplFOAM:
         if colorbar_range:
             contour_range = numpy.linspace(colorbar_range[0],
                                            colorbar_range[1], contour_num)
-            contourf_range = numpy.linspace(colorbar_range[0],
-                                            colorbar_range[1], contour_num)
-            results[results > colorbar_range[1]] = colorbar_range[1]
-            results[results < colorbar_range[0]] = colorbar_range[0]
+            '''
+            contour_range = None
+            if numpy.sign(colorbar_range[0]) != numpy.sign(colorbar_range[1]):
+                contour_range =  numpy.append(
+                        numpy.sign(colorbar_range[0])*numpy.logspace(0, numpy.log10(numpy.abs(colorbar_range[0])), contour_num//2),
+                        numpy.sign(colorbar_range[1])*numpy.logspace(0, numpy.log10(numpy.abs(colorbar_range[1])), contour_num//2))
+            else :
+                contour_range = numpy.sign(colorbar_range[0])*numpy.logspace(numpy.log10(numpy.abs(colorbar_range[0])), numpy.log10(numpy.abs(colorbar_range[1])), contour_num)
+
+            contour_range = numpy.sort(contour_range)
+            '''
 
             matplotlib.pyplot.tricontour(
-                x, y, tri, results, contour_range, colors='0.2')
+                x, y, tri, results, contour_range, extend='both', colors='0.2')
         else:
-            matplotlib.pyplot.tricontour(x, y, tri, results, colors='0.2')
+            matplotlib.pyplot.tricontour(x, y, tri, results, extend='both', colors=style.LIGHT_COLOR)
 
         if colorbar:
             matplotlib.pyplot.colorbar().ax.set_title(colorbar_zlabel)
 
-        # matplotlib.pyplot.tricontourf(x, y, tri, results, contourf_range)
         matplotlib.pyplot.tight_layout()
         for out_filename in out_filenames:
             matplotlib.pyplot.savefig(out_filename)
