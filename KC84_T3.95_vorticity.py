@@ -22,10 +22,24 @@ for time in mf.timestep_available[1:]:
                 '/home/bowen/VIV/PostProcessing/fushixiao/KC84_T3.95/vorticity/{:02d}_{:.2f}.png'.
                 format(strip_i, time)
             ],
-            colorbar_range=(-40, 40),
+            colorbar_range=(-50, 50),
             composition_index=2,
-            x_range=(-0.15, 0.15),
-            y_range=(-0.6, 0.6),
-            contour_num=10,
+            x_range=(-0.09, 0.09),
+            y_range=(-0.36, 0.36),
+            contourf_num=20,
             figsize=(style.ONE_AND_HALF_COLUMN_WIDTH,
                      style.ONE_AND_HALF_COLUMN_LONG_HEIGHT * 1.5))
+        mf.tricontour_field(
+            # field_name='vorticity',
+            field_name='vorticity',
+            out_filenames=[
+                '/home/bowen/VIV/PostProcessing/fushixiaoSway/KC84_T3.95/vorticity_gray/{:02d}_{:.2f}.png'.
+                format(strip_i, time)
+            ],
+            colorbar_range=(-50, 50),
+            composition_index=2,
+            x_range=(-0.09, 0.09),
+            y_range=(-0.35, 0.35),
+            contour_num=16,
+            figsize=(style.SINGLE_COLUMN_WIDTH,
+                     style.SINGLE_COLUMN_WIDTH * 4))
